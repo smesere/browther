@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Rust Browser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #browser-controls {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ccc;
+            height: 50px;
+        }
+
+        #control-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        #back-button, #forward-button {
+            padding: 5px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 50%;
+            margin-right: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #back-button svg, #forward-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        #refresh-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        #url-input {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            outline: none;
+        }
+
+        #browser-frame {
+            flex: 1;
+            border: none;
+            width: 100%;
+            height: calc(100vh - 50px);
+        }
+
+        #message {
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-top: 1px solid #ccc;
+            font-size: 14px;
+            color: #333;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="browser-controls">
+        <div id="control-buttons">
+            <button id="back-button" onclick="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <img id="refresh-icon" src="refresh-icon-png-2.png" alt="Refresh" onclick="reloadPage();">
+            <button id="forward-button" onclick="goForward()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+        <input type="text" id="url-input" placeholder="Enter URL here" onkeyup="if(event.key === 'Enter'){navigate();}">
+    </div>
+    <iframe id="browser-frame" src="https://www.example.com"></iframe>
+
+    <script>
+        function logMessage(message) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent += message + '\n';
+            console.log(message);  // Also log to the console if accessible
+        }
+
+        function navigate() {
+            try {
+                const urlInput = document.getElementById('url-input').value.trim();
+                const frame = document.getElementById('browser-frame');
+
+                if (urlInput) {
+                    let fullUrl;
+                    if (urlInput.startsWith('http')) {
+                        fullUrl = urlInput;
+                    } else {
+                        fullUrl = 'https://' + urlInput;
+                    }
+                    frame.src = fullUrl;
+                    logMessage("Navigated to: " + fullUrl);
+                } else {
+                    logMessage("Error: URL input is empty or invalid.");
+                }
+            } catch (error) {
+                logMessage("Error during navigation: " + error.message);
+            }
+        }
+
+        function goBack() {
+            try {
+                window.history.back();
+                logMessage("Navigated back.");
+            } catch (error) {
+                logMessage("Error during back navigation: " + error.message);
+            }
+        }
+
+        function goForward() {
+            try {
+                window.history.forward();
+                logMessage("Navigated forward.");
+            } catch (error) {
+                logMessage("Error during forward navigation: " + error.message);
+            }
+        }
+
+        function reloadPage() {
+            try {
+                location.reload();
+                logMessage("Page reloaded.");
+            } catch (error) {
+                logMessage("Error during page reload: " + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
